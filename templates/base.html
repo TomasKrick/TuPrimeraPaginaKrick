@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mi blog{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Mi primera página con Django</h1>
+        <nav>
+            <a href="{% url 'blog:inicio' %}">Inicio</a> |
+            <a href="{% url 'blog:crear_autor' %}">Crear autor</a> |
+            <a href="{% url 'blog:crear_categoria' %}">Crear categoría</a> |
+            <a href="{% url 'blog:crear_post' %}">Crear post</a> |
+            <a href="{% url 'blog:buscar_post' %}">Buscar</a>
+        </nav>
+        <hr>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
