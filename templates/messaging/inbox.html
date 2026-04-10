@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Inbox{% endblock %}
+
+{% block content %}
+    <h1>Mensajes recibidos</h1>
+
+    <a href="{% url 'messaging:send_message' %}">Enviar mensaje</a>
+
+    <hr>
+
+    {% if received_messages %}
+        <ul>
+            {% for message in received_messages %}
+                <li>
+                    <a href="{% url 'messaging:message_detail' message.pk %}">
+                        {{ message.subject }}
+                    </a>
+                    - de {{ message.sender.username }} - {{ message.created_at }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tenés mensajes todavía.</p>
+    {% endif %}
+{% endblock %}

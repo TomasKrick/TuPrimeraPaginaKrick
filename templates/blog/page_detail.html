@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    <h2>{{ page.subtitle }}</h2>
+
+    {% if page.image %}
+        <img src="{{ page.image.url }}" alt="{{ page.title }}" width="350">
+    {% endif %}
+
+    <p>Fecha: {{ page.published_date }}</p>
+    <p>Autor: {{ page.author.username }}</p>
+
+    <div>
+        {{ page.content|safe }}
+    </div>
+
+    {% if user.is_authenticated and user == page.author %}
+        <a href="{% url 'blog:page_update' page.pk %}">Editar</a>
+        <a href="{% url 'blog:page_delete' page.pk %}">Borrar</a>
+    {% endif %}
+{% endblock %}

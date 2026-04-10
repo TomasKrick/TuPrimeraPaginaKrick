@@ -1,79 +1,67 @@
 from django.shortcuts import render
-from .models import Post
-from .forms import AutorForm, CategoriaForm, PostForm, BusquedaPostForm
+from django.urls import reverse_lazy
+from django.db.models import Q
+from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-def inicio(request):
-    return render(request, "blog/inicio.html")
-
-
-def crear_autor(request):
-    mensaje = ""
-
-    if request.method == "POST":
-        form = AutorForm(request.POST)
-        if form.is_valid():
-            form.save()
-            mensaje = "Autor guardado con éxito."
-            form = AutorForm()
-    else:
-        form = AutorForm()
-
-    return render(
-        request,
-        "blog/formulario.html",
-        {"form": form, "titulo": "Crear autor", "mensaje": mensaje},
-    )
+from .models import Page
+from .forms import PageForm
 
 
-def crear_categoria(request):
-    mensaje = ""
-
-    if request.method == "POST":
-        form = CategoriaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            mensaje = "Categoría guardada con éxito."
-            form = CategoriaForm()
-    else:
-        form = CategoriaForm()
-
-    return render(
-        request,
-        "blog/formulario.html",
-        {"form": form, "titulo": "Crear categoría", "mensaje": mensaje},
-    )
+def home(request):
+    return render(request, "blog/home.html")
 
 
-def crear_post(request):
-    mensaje = ""
-
-    if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            form.save()
-            mensaje = "Post guardado con éxito."
-            form = PostForm()
-    else:
-        form = PostForm()
-
-    return render(
-        request,
-        "blog/formulario.html",
-        {"form": form, "titulo": "Crear post", "mensaje": mensaje},
-    )
+def about(request):
+    return render(request, "blog/about.html")
 
 
-def buscar_post(request):
-    resultados = []
-    form = BusquedaPostForm(request.GET or None)
+class PageListView(ListView):
+    model = Page
+    template_name = "blog/page_list.html"
+    context_object_name = "pages"
+    ordering = ["-published_date"]
 
-    if form.is_valid():
-        titulo_buscado = form.cleaned_data.get("titulo")
-        if titulo_buscado:
-            resultados = Post.objects.filter(titulo__icontains=titulo_buscado)
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        q = self.request.GET.get("q")
+        if q:
+            queryset = queryset.filter(
+                Q(title__icontains=q) | Q(subtitle__icontains=q)
+            )
+        return queryset
 
-    return render(
-        request,
-        "blog/buscar.html",
-        {"form": form, "resultados": resultados},
-    )
+
+class PageDetailView(DetailView):
+    model = Page
+    template_name = "blog/page_detail.html"
+    context_object_name = "page"
+
+
+class PageCreateView(LoginRequiredMixin, CreateView):
+    model = Page
+    form_class = PageForm
+    template_name = "blog/page_form.html"
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class PageUpdateView(LoginRequiredMixin, UpdateView):
+    model = Page
+    form_class = PageForm
+    template_name = "blog/page_form.html"
+
+    def get_queryset(self):
+        return Page.objects.filter(author=self.request.user)
+
+
+class PageDeleteView(LoginRequiredMixin, DeleteView):
+    model = Page
+    template_name = "blog/page_confirm_delete.html"
+    success_url = reverse_lazy("blog:page_list")
+
+    def get_queryset(self):
+        return Page.objects.filter(author=self.request.user)

@@ -1,25 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.urls import reverse
+from django_ckeditor_5.fields import CKEditor5Field
 
-class Autor(models.Model):
-    nombre = models.CharField(max_length=50)
-    email = models.EmailField()
-
-    def __str__(self):
-        return self.nombre
-
-
-class Categoria(models.Model):
-    nombre = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.nombre
-
-
-class Post(models.Model):
-    titulo = models.CharField(max_length=100)
-    contenido = models.TextField()
-    autor = models.ForeignKey(Autor, on_delete=models.CASCADE)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+class Page(models.Model):
+    title = models.CharField(max_length=100)
+    subtitle = models.CharField(max_length=150)
+    content = CKEditor5Field("Contenido")
+    image = models.ImageField(upload_to="pages/", blank=True, null=True)
+    published_date = models.DateField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="pages")
 
     def __str__(self):
-        return self.titulo
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse("blog:page_detail", kwargs={"pk": self.pk})

@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Mi blog{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <header>
-        <h1>Mi primera página con Django</h1>
-        <nav>
-            <a href="{% url 'blog:inicio' %}">Inicio</a> |
-            <a href="{% url 'blog:crear_autor' %}">Crear autor</a> |
-            <a href="{% url 'blog:crear_categoria' %}">Crear categoría</a> |
-            <a href="{% url 'blog:crear_post' %}">Crear post</a> |
-            <a href="{% url 'blog:buscar_post' %}">Buscar</a>
-        </nav>
-        <hr>
-    </header>
+    <nav>
+        <a href="{% url 'blog:home' %}">Home</a>
+        <a href="{% url 'blog:about' %}">About</a>
+        <a href="{% url 'blog:page_list' %}">Pages</a>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+        {% if user.is_authenticated %}
+            <a href="{% url 'blog:page_create' %}">Crear página</a>
+            <a href="{% url 'messaging:inbox' %}">Messages</a>
+            <a href="{% url 'accounts:profile' %}">Profile</a>
+
+            <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:login' %}">Login</a>
+            <a href="{% url 'accounts:signup' %}">Signup</a>
+        {% endif %}
+    </nav>
+
+    <hr>
+
+    {% block content %}{% endblock %}
 </body>
 </html>

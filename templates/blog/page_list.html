@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Pages{% endblock %}
+
+{% block content %}
+    <h1>Páginas</h1>
+
+    <form method="get">
+        <input type="text" name="q" placeholder="Buscar por título o subtítulo" value="{{ request.GET.q }}">
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if pages %}
+        {% for page in pages %}
+            <article>
+                <h2>{{ page.title }}</h2>
+                <h3>{{ page.subtitle }}</h3>
+
+                {% if page.image %}
+                    <img src="{{ page.image.url }}" alt="{{ page.title }}" width="250">
+                {% endif %}
+
+                <p>Fecha: {{ page.published_date }}</p>
+                <p>Autor: {{ page.author.username }}</p>
+
+                <a href="{% url 'blog:page_detail' page.pk %}">Leer más</a>
+
+                {% if user.is_authenticated and user == page.author %}
+                    <a href="{% url 'blog:page_update' page.pk %}">Editar</a>
+                    <a href="{% url 'blog:page_delete' page.pk %}">Borrar</a>
+                {% endif %}
+            </article>
+            <hr>
+        {% endfor %}
+    {% else %}
+        {% if request.GET.q %}
+            <p>No se encontraron páginas para la búsqueda.</p>
+        {% else %}
+            <p>No hay páginas aún.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}
