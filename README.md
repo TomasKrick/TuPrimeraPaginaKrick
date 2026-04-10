@@ -1,26 +1,25 @@
 # Proyecto Final Django
 
-Aplicación web desarrollada con Django como proyecto final.
+Aplicación web estilo blog desarrollada con Django.
 
 ## Apps del proyecto
 
-- `blog`: gestión de páginas/posts, listado, detalle, creación, edición y borrado
+- `blog`: gestión de páginas, listado, detalle, creación, edición y borrado
 - `accounts`: registro, login, logout, perfil, edición de perfil y cambio de contraseña
 - `messaging`: envío y visualización de mensajes entre usuarios
 
 ## Funcionalidades
 
-- Página de inicio
-- Página "About"
-- Listado de páginas/posts
-- Vista de detalle con “Leer más”
-- Crear, editar y borrar páginas/posts
-- Registro de usuario
-- Inicio y cierre de sesión
+- Home
+- About
+- Pages
+- Detalle de páginas con “Leer más”
+- Crear, editar y borrar páginas
+- Signup, login y logout
 - Perfil de usuario
 - Edición de perfil
 - Cambio de contraseña
-- Sistema de mensajería
+- Mensajería entre usuarios
 - Panel de administración de Django
 
 ## Requisitos
